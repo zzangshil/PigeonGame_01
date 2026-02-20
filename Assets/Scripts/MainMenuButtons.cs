@@ -7,16 +7,14 @@ public class MainMenuButtons : MonoBehaviour
     public void PlayGame()
     {
         Debug.Log("Play pressed");
-        // Replace "GameScene" with your actual gameplay scene name
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene(1); // Load scene with build index 1
     }
 
     // Called when Options button is clicked
     public void OpenOptions()
     {
         Debug.Log("Options pressed");
-        // Here you can open an options panel
-        // For example: optionsPanel.SetActive(true);
+        // Open options panel here if you have one
     }
 
     // Called when Quit button is clicked
@@ -25,7 +23,6 @@ public class MainMenuButtons : MonoBehaviour
         Debug.Log("Quit pressed");
         Application.Quit();
 
-        // If in Editor, also stop play mode
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
