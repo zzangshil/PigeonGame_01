@@ -11,33 +11,29 @@ public class MenuCameraScroll : MonoBehaviour
     public float maxY = 5f;
 
     [Header("Edge Scrolling")]
-    public float edgeThreshold = 50f; // distance from screen edge to start scrolling
+    public float edgeThreshold = 50f;
 
     void Update()
     {
-        if (Mouse.current == null) return; // safety check
+        if (Mouse.current == null) return; 
 
         Vector3 pos = transform.position;
         float scroll = 0f;
 
-        // Get mouse position from new Input System
         Vector2 mousePos = Mouse.current.position.ReadValue();
 
-        // Check if mouse is near top of screen
         if (mousePos.y >= Screen.height - edgeThreshold)
         {
-            scroll = 1f; // scroll up
+            scroll = 1f; 
         }
-        // Check if mouse is near bottom of screen
+        
         else if (mousePos.y <= edgeThreshold)
         {
-            scroll = -1f; // scroll down
+            scroll = -1f; 
         }
 
-        // Apply scroll
         pos.y += scroll * scrollSpeed * Time.deltaTime;
 
-        // Clamp camera movement
         pos.y = Mathf.Clamp(pos.y, minY, maxY);
 
         transform.position = pos;
