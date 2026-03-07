@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 138f6842224072a4182b96a9c9110c3e, type: 3}
+  m_Name: SisterAFirstDialogue
+  m_EditorClassIdentifier: 
+  lines:
+  - text: ...
+    voiceClip: {fileID: 8300000, guid: 7905718548988df40a821c0ac2b1ba08, type: 3}
+    stopPreviousSound: 0
+    emotionSprite: {fileID: 21300000, guid: 41d80a86173804d45912eb3665905731, type: 3}
+    uiObjectIDs: []
+    objectsInteractable: 1
+  - text: Wow... You're a... Pigeon.
+    voiceClip: {fileID: 0}
+    stopPreviousSound: 0
+    emotionSprite: {fileID: 21300000, guid: 41d80a86173804d45912eb3665905731, type: 3}
+    uiObjectIDs: []
+    objectsInteractable: 0
+  choices:
+  - text: Yeah...?
+    nextNode: {fileID: 11400000, guid: bf3cd97e3c5686f44849f507bac885a4, type: 2}
+  - text: So What?
+    nextNode: {fileID: 11400000, guid: bf3cd97e3c5686f44849f507bac885a4, type: 2}
