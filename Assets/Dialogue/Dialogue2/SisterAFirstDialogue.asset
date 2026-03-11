@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lines:
   - text: ...
-    voiceClip: {fileID: 8300000, guid: 7905718548988df40a821c0ac2b1ba08, type: 3}
+    voiceClip: {fileID: 0}
     stopPreviousSound: 0
     emotionSprite: {fileID: 21300000, guid: 41d80a86173804d45912eb3665905731, type: 3}
     uiObjectIDs: []

@@ -20,13 +20,13 @@ MonoBehaviour:
     uiObjectIDs: []
     objectsInteractable: 0
   - text: This is... Not exactly what I expected.
-    voiceClip: {fileID: 8300000, guid: 31438b0a5fe5c6447a9432f4525d3660, type: 3}
+    voiceClip: {fileID: 0}
     stopPreviousSound: 1
     emotionSprite: {fileID: 21300000, guid: 776495633642d87409ceb71428490f47, type: 3}
     uiObjectIDs: []
     objectsInteractable: 0
   - text: The office works at night, that's what it said.
-    voiceClip: {fileID: 8300000, guid: 2fd135d2029a4954d953416026839324, type: 3}
+    voiceClip: {fileID: 0}
     stopPreviousSound: 1
     emotionSprite: {fileID: 21300000, guid: 776495633642d87409ceb71428490f47, type: 3}
     uiObjectIDs: []
