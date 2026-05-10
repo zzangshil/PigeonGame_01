@@ -5,29 +5,43 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpForce = 7f;
 
+    [Header("Better Jump")]
+    public float fallMultiplier = 2.5f;
+    public float lowJumpMultiplier = 2f;
+
     [Header("Ground Check")]
     public Transform groundCheck;
-    public float groundCheckRadius = 0.2f;
+    public float groundRadius = 0.2f;
     public LayerMask groundLayer;
 
     private Rigidbody2D rb;
     private bool isGrounded;
 
+    [HideInInspector]
+    public Vector3 lastSafePosition;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        lastSafePosition = transform.position;
     }
 
     void Update()
     {
-        // Better ground detection
+        // Ground check
         isGrounded = Physics2D.OverlapCircle(
             groundCheck.position,
-            groundCheckRadius,
+            groundRadius,
             groundLayer
         );
 
-        // Left/right movement
+        // Save safe position
+        if (isGrounded)
+        {
+            lastSafePosition = transform.position;
+        }
+
+        // Movement
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
@@ -36,15 +50,28 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
+
+        // Better jump physics
+        if (rb.linearVelocity.y < 0)
+        {
+            rb.gravityScale = fallMultiplier;
+        }
+        else if (rb.linearVelocity.y > 0 && !Input.GetKey(KeyCode.Space))
+        {
+            rb.gravityScale = lowJumpMultiplier;
+        }
+        else
+        {
+            rb.gravityScale = 1f;
+        }
     }
 
-    // Shows ground check circle in Scene view
-    private void OnDrawGizmosSelected()
+    void OnDrawGizmosSelected()
     {
         if (groundCheck != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+            Gizmos.DrawWireSphere(groundCheck.position, groundRadius);
         }
     }
 }

@@ -1,137 +1,66 @@
 using UnityEngine;
 
-public class PlatformerCameraPro : MonoBehaviour
+public class PressureCamera : MonoBehaviour
 {
-    [Header("Target")]
     public Transform player;
-    private Rigidbody2D playerRb;
 
-    [Header("Follow")]
-    public Vector3 offset = new Vector3(0f, 1f, -10f);
-    public float smoothTime = 0.15f;
+    [Header("Movement")]
+    public float forwardSpeed = 3f;
+    public float followYSpeed = 3f;
+    public float yOffset = 1.5f;
 
-    [Header("Dead Zone")]
-    public float deadZoneX = 1.5f;
-    public float deadZoneY = 1f;
+    [Header("Speed Increase")]
+    public float speedIncreaseRate = 0.2f;
+    public float maxSpeed = 8f;
 
-    [Header("Zoom")]
-    public Camera cam;
-    public float normalZoom = 5f;
-    public float jumpZoom = 5.5f;
-    public float fallZoom = 4.5f;
-    public float zoomSpeed = 3f;
+    [Header("Background Bounds (Y only)")]
+    public SpriteRenderer background;
 
-    [Header("Shake")]
-    public float landShakeIntensity = 0.15f;
-    public float landShakeDuration = 0.15f;
-
-    private Vector3 velocity = Vector3.zero;
-    private float currentZoom;
-    private Vector3 shakeOffset;
-
-    private bool wasGrounded;
+    private float minY, maxY;
+    private float camHalfHeight;
 
     void Start()
     {
-        if (player == null)
-        {
-            GameObject p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null) player = p.transform;
-        }
+        camHalfHeight = Camera.main.orthographicSize;
 
-        if (player != null)
-            playerRb = player.GetComponent<Rigidbody2D>();
+        Bounds bgBounds = background.bounds;
 
-        if (cam == null)
-            cam = Camera.main;
-
-        currentZoom = normalZoom;
+        minY = bgBounds.min.y + camHalfHeight;
+        maxY = bgBounds.max.y - camHalfHeight;
     }
 
-    void LateUpdate()
+    void Update()
     {
         if (player == null) return;
 
-        HandleCameraFollow();
-        HandleZoom();
-        HandleLandingShake();
+        Vector3 pos = transform.position;
 
-        cam.orthographicSize = Mathf.Lerp(
-            cam.orthographicSize,
-            currentZoom,
-            Time.deltaTime * zoomSpeed
-        );
+        // speed increase
+        forwardSpeed += speedIncreaseRate * Time.deltaTime;
+        forwardSpeed = Mathf.Clamp(forwardSpeed, 0, maxSpeed);
+
+        // ALWAYS move forward (IMPORTANT)
+        pos.x += forwardSpeed * Time.deltaTime;
+
+        // follow player Y
+        float targetY = player.position.y + yOffset;
+        pos.y = Mathf.Lerp(pos.y, targetY, Time.deltaTime * followYSpeed);
+
+        // ONLY clamp Y (safe)
+        pos.y = Mathf.Clamp(pos.y, minY, maxY);
+
+        transform.position = pos;
+
+        CheckIfPlayerLost();
     }
 
-    void HandleCameraFollow()
+    void CheckIfPlayerLost()
     {
-        Vector3 target = player.position + offset;
+        Vector3 screenPos = Camera.main.WorldToViewportPoint(player.position);
 
-        Vector3 delta = target - transform.position;
-
-        // ---- DEAD ZONE (this fixes fast camera movement) ----
-        if (Mathf.Abs(delta.x) < deadZoneX)
-            target.x = transform.position.x;
-
-        if (Mathf.Abs(delta.y) < deadZoneY)
-            target.y = transform.position.y;
-
-        target += shakeOffset;
-        target.z = -10f;
-
-        transform.position = Vector3.SmoothDamp(
-            transform.position,
-            target,
-            ref velocity,
-            smoothTime
-        );
-    }
-
-    void HandleZoom()
-    {
-        if (playerRb == null) return;
-
-        if (playerRb.linearVelocity.y > 0.1f)
+        if (screenPos.x < 0 || screenPos.y < -0.2f)
         {
-            currentZoom = jumpZoom;
+            GameManager.instance.PlayerDied();
         }
-        else if (playerRb.linearVelocity.y < -0.1f)
-        {
-            currentZoom = fallZoom;
-        }
-        else
-        {
-            currentZoom = normalZoom;
-        }
-    }
-
-    void HandleLandingShake()
-    {
-        if (playerRb == null) return;
-
-        bool isGrounded = Mathf.Abs(playerRb.linearVelocity.y) < 0.01f;
-
-        // detect landing
-        if (!wasGrounded && isGrounded)
-        {
-            StartCoroutine(Shake());
-        }
-
-        wasGrounded = isGrounded;
-    }
-
-    System.Collections.IEnumerator Shake()
-    {
-        float t = 0f;
-
-        while (t < landShakeDuration)
-        {
-            shakeOffset = (Vector3)Random.insideUnitCircle * landShakeIntensity;
-
-            t += Time.deltaTime;
-            yield return null;
-        }
-
-        shakeOffset = Vector3.zero;
     }
 }
